@@ -1,0 +1,9 @@
+plan chosen by the planner: Limit / Index Scan using filter_test_v_idx on filter_test / Order By
+exact answers (no index):          10
+with the index, factory settings:    1 answers, 1 correct
+with iterative_scan = strict_order : 10 answers, 10 correct
+with iterative_scan = relaxed_order: 10 answers, 10 correct
+
+iterative_scan = off           :   0 users out of 100 get their 10 answers (2.0 ms per query)
+iterative_scan = strict_order  : 100 users out of 100 get their 10 answers (17.5 ms per query)
+iterative_scan = relaxed_order : 100 users out of 100 get their 10 answers (16.6 ms per query)

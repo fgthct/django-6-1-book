@@ -1,0 +1,85 @@
+{% extends "documents/base.html" %}
+{% block title %}{{ document.title }}{% endblock %}
+{% block content %}
+<h1>{{ document.title }}</h1>
+<p class="muted">Owner: {{ document.owner.get_full_name|default:document.owner.username }} · current version: v{{ document.current_version.number }}
+  · <a href="{% url 'download' document.pk document.current_version.number %}">Download</a></p>
+
+{% partialdef flow %}
+<section id="flow" class="panel">
+  {% for n in notices %}<p class="notice {{ n.tags }}">{{ n }}</p>{% endfor %}
+  <p>State: <strong>{{ document.get_state_display }}</strong></p>
+  {% if last_review %}
+    <p class="muted">{{ last_review.get_mode_display }} · version {{ last_review.version.number }} · {{ last_review.get_status_display }}</p>
+    {% if last_review.message %}<p class="message">{{ last_review.message }}</p>{% endif %}
+    <ol>
+      {% for p in participants %}
+      <li>{{ p.user.get_full_name|default:p.user.username }} — {{ p.get_decision_display }}{% if p.comment %}: {{ p.comment }}{% endif %}</li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+  {% if can_decide %}
+    <form hx-post="{% url 'decide' document.pk %}" hx-target="#flow" hx-swap="outerHTML">
+      <textarea name="comment" rows="2" placeholder="Comment (required to send back)"></textarea>
+      <button class="primary" name="decision" value="approve">Approve</button>
+      <button class="danger" name="decision" value="send_back">Send back</button>
+    </form>
+  {% endif %}
+  {% if is_owner and review %}
+    <form hx-post="{% url 'cancel_review' document.pk %}" hx-target="#flow" hx-swap="outerHTML">
+      <button class="danger">Cancel review</button>
+    </form>
+  {% endif %}
+  {% if review_form %}
+    <form hx-post="{% url 'send_for_review' document.pk %}" hx-target="#flow" hx-swap="outerHTML">
+      <h3>Send for review</h3>
+      <p>{{ review_form.reviewer_1 }} {{ review_form.reviewer_2 }} {{ review_form.reviewer_3 }} {{ review_form.reviewer_4 }}</p>
+      <p>{{ review_form.mode }}</p>
+      <p>{{ review_form.message }}</p>
+      <button class="primary">Send</button>
+    </form>
+  {% endif %}
+</section>
+{% endpartialdef %}
+{% partial flow %}
+
+<h2>Text</h2>
+<pre class="text">{{ document.current_version.text }}</pre>
+
+{% if can_edit %}
+<div class="panel">
+  <h2>Upload a new version</h2>
+  <form method="post" action="{% url 'new_version' document.pk %}" enctype="multipart/form-data">{% csrf_token %}
+    <input type="file" name="file" required>
+    <input name="note" placeholder="Note">
+    <button class="primary" type="submit">Upload</button>
+  </form>
+</div>
+{% endif %}
+
+<h2>Versions</h2>
+<table>
+  {% for v in versions %}
+  <tr><td>v{{ v.number }}</td><td>{{ v.author.get_full_name|default:v.author.username }}</td><td>{{ v.note }}</td>
+      <td><a href="{% url 'download' document.pk v.number %}">{{ v.file_name }}</a></td></tr>
+  {% endfor %}
+</table>
+
+{% if access_form %}
+<h2>Access</h2>
+<table>
+  {% for a in accesses %}
+  <tr><td>{{ a.user.get_full_name|default:a.user.username }}</td><td>{{ a.get_level_display }}</td>
+      <td><form method="post" action="{% url 'revoke_access' document.pk a.user_id %}">{% csrf_token %}<button>Revoke</button></form></td></tr>
+  {% endfor %}
+</table>
+<form method="post" action="{% url 'grant_access' document.pk %}">{% csrf_token %}
+  {{ access_form.user }} {{ access_form.level }} <button class="primary">Grant</button>
+</form>
+{% endif %}
+
+<h2>Activity</h2>
+<ul>
+  {% for e in events %}<li class="muted">{{ e.created|date:"Y-m-d H:i" }} · {{ e.user.get_full_name|default:e.user.username }} · {{ e.kind }} {{ e.detail }}</li>{% endfor %}
+</ul>
+{% endblock %}

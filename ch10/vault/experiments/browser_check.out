@@ -1,0 +1,12 @@
+1. page and controls background: rgb(13, 17, 23) | html: rgb(13, 17, 23) | color-scheme: dark
+   elements with a light background in the list: []
+   elements with a light background in the detail page: []
+2. after sending: In review | 2 reviewers
+3. Luca sees the message: True | Approve button: 1
+   Giulia (not her turn): Approve button: 0
+4. after Luca's approval, Giulia sees Approve: 1
+   error without a comment, inside the fragment: To send a document back you need to write a comment.
+5. after sending back: Draft
+   Marta reads: ["Giulia Verdi — Sent back: The third-quarter figures don't add up."]
+6. search: Quarterly report · distance 0.500
+console errors (marta, luca, giulia): [] [] []

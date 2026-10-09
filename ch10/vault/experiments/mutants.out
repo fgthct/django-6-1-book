@@ -1,0 +1,50 @@
+OK    permissions: the accesses don't count
+OK    permissions: the owner doesn't see their own
+OK    permissions: everybody sees everything
+OK    permissions: the owner only counts as “edit”
+OK    permissions: exact level instead of minimum
+OK    view: document looked up among all
+OK    files: orphans are not cleaned up
+OK    versions: no lock on the document
+OK    versions: edit permission not checked
+OK    versions: uploads allowed during the review
+OK    versions: an identical file is accepted
+OK    versions: the approved stays approved
+OK    review: whoever can only edit chooses the reviewers
+OK    review: the owner can be a reviewer
+OK    review: duplicate reviewers accepted
+OK    review: no limit on the reviewers
+OK    review: the reviewers don't get access
+OK    review: in sequence everybody is notified at once
+OK    review: in free mode only the first is notified
+OK    review: the message doesn't reach the reviewers
+OK    decision: no lock
+OK    decision: the order of the turns is ignored
+OK    decision: sending back without a comment
+OK    decision: in free mode everybody has to approve
+OK    decision: sending back doesn't return to draft
+OK    decision: you can decide twice
+OK    decision: whoever is not a reviewer can decide too
+OK    decision: the other reviewers don't become “superseded”
+OK    accesses: a reviewer's access can be revoked
+OK    review: anybody cancels
+OK    notifications: sent before the commit
+OK    notifications: one message with all the recipients
+OK    model: more open reviews allowed
+ALIVE search: no iterative scan
+OK    search: no permissions filter
+OK    search: the old versions too
+ALIVE search: no final reordering
+OK    answer: the distance threshold is ignored
+OK    indexing: the chunks pile up
+OK    migration: no way back
+OK    migration: wrong fingerprint
+OK    migration: the author is not copied
+OK    theme: a white background in a corner
+OK    theme: the declaration to the browser is missing
+OK    theme: color-scheme removed from the CSS
+OK    page: content not escaped
+OK    page: the HTMX errors are invisible
+OK    csp: the middleware is not in the list
+OK    csp: inline scripts allowed
+surviving mutants: 2 out of 49
