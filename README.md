@@ -53,4 +53,4 @@ chapter lives in its own folder.
 - Never commit a real `.env` file. The repository holds only `.env.example`.
 - The embedding model of chapters 6 and 7 (about one gigabyte) is downloaded the first time it is needed
   into a `.models/` folder, which `.gitignore` excludes.
-- No licence has been chosen yet: until a `LICENSE` file is added, all rights are reserved.
+- The code is released under the MIT licence (see `LICENSE`). It covers the code in this repository only: the text of the book remains under the author's copyright.
