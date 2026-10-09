@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Task Manager{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 48rem; margin: 2rem auto; padding: 0 1rem; }
+    nav a { margin-right: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { padding: .4rem .5rem; border-bottom: 1px solid #ddd; text-align: left; }
+    .done { text-decoration: line-through; color: #777; }
+    form.inline { display: inline; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{% url 'todo:list' %}">Tasks</a>
+    <a href="{% url 'todo:new' %}">New</a>
+    <a href="{% url 'admin:index' %}">Admin</a>
+  </nav>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+</html>

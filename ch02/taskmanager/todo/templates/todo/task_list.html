@@ -1,0 +1,49 @@
+{% extends "todo/base.html" %}
+
+{% block content %}
+<h1>Tasks</h1>
+
+<p>
+  Show:
+  <a href="{% url 'todo:list' %}">all</a> ·
+  <a href="?status=open">open</a> ·
+  <a href="?status=completed">completed</a>
+</p>
+
+<table>
+  <thead>
+    <tr><th>Title</th><th>Project</th><th>Due</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for task in object_list %}
+    <tr>
+      <td class="{% if task.completed %}done{% endif %}">{{ task.title }}</td>
+      <td>{{ task.project.name }}</td>
+      <td>{{ task.due_date|date:"m/d/Y"|default:"—" }}</td>
+      <td>
+        <form class="inline" method="post" action="{% url 'todo:toggle' task.pk %}">
+          {% csrf_token %}
+          <button type="submit">{% if task.completed %}Reopen{% else %}Done{% endif %}</button>
+        </form>
+        <a href="{% url 'todo:edit' task.pk %}">Edit</a>
+        <a href="{% url 'todo:delete' task.pk %}">Delete</a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">No tasks.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if is_paginated %}
+<p>
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if status %}&status={{ status }}{% endif %}">« previous</a>
+  {% endif %}
+  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if status %}&status={{ status }}{% endif %}">next »</a>
+  {% endif %}
+</p>
+{% endif %}
+{% endblock %}
