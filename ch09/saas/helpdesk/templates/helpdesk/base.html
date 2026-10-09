@@ -1,0 +1,25 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Helpdesk{% endblock %}</title>
+  <link rel="icon" href="{% static 'favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'app.css' %}">
+  <meta name="htmx-config" content='{"includeIndicatorStyles": false, "allowEval": false}'>
+  <script src="{% static 'htmx.min.js' %}"></script>
+</head>
+<body>
+  <header>
+    <strong>{% if request.organization %}{{ request.organization.name }}{% else %}Helpdesk{% endif %}</strong>
+    {% if user.is_authenticated and request.member %}
+      · <a href="{% url 'dashboard' %}">Dashboard</a>
+    {% endif %}
+  </header>
+  {% block content %}{% endblock %}
+  <script nonce="{{ csp_nonce }}">
+    document.body.addEventListener("htmx:configRequest", function (e) {
+      e.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+    });
+  </script>
+</body>
+</html>

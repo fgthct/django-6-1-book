@@ -1,0 +1,41 @@
+OK   manager: doesn't filter
+OK   manager: without a tenant returns everything
+SURVIVED manager: ignores the fetch mode
+OK   write: accepts another tenant
+OK   write: doesn't set the tenant
+OK   ticket: incomplete ordering
+OK   model: no one-role-per-organization constraint
+OK   organization: the mailer is not validated
+OK   middleware: no membership check
+OK   middleware: unknown subdomain ignored
+OK   middleware: the context is never closed
+OK   tenant: contexts don't nest
+OK   services: role not checked
+SURVIVED services: assignee from another tenant
+OK   services: notification before the commit
+OK   services: free status
+OK   notifications: wrong mailer
+OK   notifications: the task doesn't reopen the tenant
+OK   notifications: recipients of every role
+OK   api: key valid on every subdomain
+SURVIVED api: tenant not activated
+SURVIVED api: unchecked pagination
+OK   api: assignee searched among all tenants
+OK   api: list without select_related
+OK   api: public docs
+OK   keys: fingerprint not verified
+OK   keys: revoked keys accepted
+OK   keys: the key itself is stored
+OK   view: ticket looked up without the filter
+OK   view: dashboard list without select_related
+SURVIVED view: the root no longer goes to the dashboard
+OK   csp: unsafe-inline in the styles
+OK   csp: no nonce in the scripts
+OK   csp: no frame-ancestors
+OK   csp: the report requires the CSRF token
+OK   csp: no limit on the body
+OK   csp: fields not truncated
+OK   csp: no cap of 20 reports
+OK   csp: the middleware is not in the list
+OK   template: an inline onclick on a button
+surviving mutants: 5 out of 40

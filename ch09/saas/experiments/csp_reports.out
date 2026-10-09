@@ -1,0 +1,5 @@
+blocked      script-src-attr              inline                 x1
+blocked      script-src-elem              inline                 x2
+report-only  require-trusted-types-for    trusted-types-sink     x3
+report-only  script-src-attr              inline                 x1
+report-only  script-src-elem              inline                 x2

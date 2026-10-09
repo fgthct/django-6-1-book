@@ -1,0 +1,8 @@
+1. address after the redirect: /login/?next=/dashboard/
+2. dashboard: 18 open  | 0 in progress  | 7 closed
+3. counter refresh requests in 6.5 s: 1
+4. “Closed” filter via htmx: address /dashboard/?status=closed - full pages loaded: 0 - #ticket-list elements: 1
+5. status change + comment: [('POST', 200), ('POST', 204), ('POST', 200)] | comments: admin@acme.test: Solved from the browser
+6. simulated XSS -> window.pwned: None | window.pwned2: None
+    Refused to execute inline script because it violates the following Content Security Policy directive: "sc…
+7. without a nonce: responses to the htmx POSTs: [('POST', 204), ('POST', 204), ('POST', 403)]

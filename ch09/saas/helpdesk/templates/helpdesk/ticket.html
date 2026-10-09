@@ -1,0 +1,35 @@
+{% extends "helpdesk/base.html" %}
+{% block title %}{{ ticket.title }}{% endblock %}
+{% block content %}
+<h1>{{ ticket.title }}</h1>
+<p>{{ ticket.description }}</p>
+{% partialdef status %}
+<div id="ticket-status">
+  <p>Status: <strong id="status-label">{{ ticket.get_status_display }}</strong></p>
+  <form hx-post="{% url 'change_status' ticket.pk %}" hx-target="#ticket-status" hx-swap="outerHTML">
+    <select name="status">
+      {% for value, label in statuses %}
+      <option value="{{ value }}"{% if value == ticket.status %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Change</button>
+  </form>
+</div>
+{% endpartialdef %}
+{% partial status %}
+{% partialdef comments %}
+<div id="comments">
+  <h2>Comments</h2>
+  <ul>
+    {% for c in comments %}
+    <li>{{ c.author.user.email }}: {{ c.body }}</li>
+    {% endfor %}
+  </ul>
+  <form hx-post="{% url 'add_comment' ticket.pk %}" hx-target="#comments" hx-swap="outerHTML">
+    <input name="body" placeholder="Write a comment" required>
+    <button type="submit">Send</button>
+  </form>
+</div>
+{% endpartialdef %}
+{% partial comments %}
+{% endblock %}

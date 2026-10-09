@@ -1,0 +1,44 @@
+{% extends "helpdesk/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+{% partialdef counters %}
+<section id="counters" class="counters"
+         hx-get="{% url 'counters' %}" hx-trigger="every 5s" hx-swap="outerHTML">
+  <div><b>{{ counters.open }}</b> open</div>
+  <div><b>{{ counters.in_progress }}</b> in progress</div>
+  <div><b>{{ counters.closed }}</b> closed</div>
+</section>
+{% endpartialdef %}
+{% partial counters %}
+<nav>
+  <a href="{% url 'dashboard' %}" hx-get="{% url 'dashboard' %}" hx-target="#ticket-list" hx-swap="outerHTML" hx-push-url="true">All</a>
+  <a href="{% url 'dashboard' %}?status=open" hx-get="{% url 'dashboard' %}?status=open" hx-target="#ticket-list" hx-swap="outerHTML" hx-push-url="true">Open</a>
+  <a href="{% url 'dashboard' %}?status=closed" hx-get="{% url 'dashboard' %}?status=closed" hx-target="#ticket-list" hx-swap="outerHTML" hx-push-url="true">Closed</a>
+</nav>
+{% partialdef ticket_list %}
+<div id="ticket-list">
+  <table>
+    <tr><th>Title</th><th>Status</th><th>Assigned to</th></tr>
+    {% for t in page %}
+    <tr>
+      <td><a href="{% url 'ticket' t.pk %}">{{ t.title }}</a></td>
+      <td>{{ t.get_status_display }}</td>
+      <td>{{ t.assigned.user.email|default:"—" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No tickets.</td></tr>
+    {% endfor %}
+  </table>
+  <p>
+    Page {{ page.number }} of {{ page.paginator.num_pages }}
+    {% if page.has_next %}
+      <a href="?page={{ page.next_page_number }}{% if status %}&status={{ status }}{% endif %}"
+         hx-get="?page={{ page.next_page_number }}{% if status %}&status={{ status }}{% endif %}"
+         hx-target="#ticket-list" hx-swap="outerHTML">Next</a>
+    {% endif %}
+  </p>
+</div>
+{% endpartialdef %}
+{% partial ticket_list %}
+{% endblock %}

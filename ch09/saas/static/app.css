@@ -1,0 +1,4 @@
+body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 56rem; }
+.counters { display: flex; gap: 2rem; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border-bottom: 1px solid #ddd; padding: .3rem .5rem; text-align: left; }
