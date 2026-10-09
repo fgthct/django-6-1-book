@@ -1,0 +1,67 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Knowledge base · Bottega Etnea</title>
+  <script src="{% static 'htmx.min.js' %}" defer></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+    article { border-top: 1px solid #ddd; padding: .5rem 0; }
+    .why { color: #666; font-size: .85rem; }
+    .htmx-indicator { opacity: 0; } .htmx-request .htmx-indicator { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>Bottega Etnea knowledge base</h1>
+  <form hx-get="{% url 'search' %}" hx-target="#outcome" hx-indicator="#waiting">
+    <input type="search" name="q" placeholder="Ask a question…" autofocus required>
+    <select name="mode">
+      {% for value, label in modes.items %}
+        <option value="{{ value }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+    <button type="submit" hx-get="{% url 'ask' %}" hx-include="closest form">Ask</button>
+    <span id="waiting" class="htmx-indicator">One moment…</span>
+  </form>
+  <div id="outcome"></div>
+</body>
+</html>
+
+{% partialdef results %}
+  {% if not question %}
+    <p>Write a question.</p>
+  {% else %}
+    {% for r in results %}
+      <article>
+        <h3>{{ r.chunk.document.title }}{% if r.chunk.section %} · {{ r.chunk.section }}{% endif %}</h3>
+        <p>{{ r.chunk.text|truncatewords:45 }}</p>
+        <p class="why">
+          score {{ r.score|floatformat:4 }}
+          · by meaning: {{ r.meaning_position|default:"—" }}
+          · by words: {{ r.words_position|default:"—" }}
+        </p>
+      </article>
+    {% empty %}
+      <p>No results for “{{ question }}”.</p>
+    {% endfor %}
+  {% endif %}
+{% endpartialdef %}
+
+{% partialdef answer %}
+  {% if not question %}
+    <p>Write a question.</p>
+  {% else %}
+    <p><strong>{{ answer.text }}</strong></p>
+    {% if answer.found %}
+      <h4>Sources</h4>
+      <ul>
+        {% for r in answer.sources %}
+          <li>{{ r.chunk.document.title }}{% if r.chunk.section %} · {{ r.chunk.section }}{% endif %}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+{% endpartialdef %}
