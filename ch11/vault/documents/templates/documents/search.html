@@ -1,0 +1,14 @@
+{% extends "documents/base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h1>Search</h1>
+<form method="get"><input name="q" value="{{ question }}" size="48"> <button class="primary" type="submit">Search</button></form>
+{% if answer %}
+  <div class="panel">
+    <p>{{ answer.text }}</p>
+    {% for c in answer.sources %}
+      <p class="muted"><a href="{% url 'detail' c.version.document.pk %}">{{ c.version.document.title }}</a> · distance {{ c.distance|floatformat:3 }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

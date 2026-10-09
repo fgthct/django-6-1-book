@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# This workflow's token can only read the repository: if an action is compromised, it can't write.
+permissions:
+  contents: read
+
+# A new push to the same branch cancels the previous run, still in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_LOCKED: "1" # uv must never modify uv.lock: if it is out of date, the job fails
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: uv sync
+      - name: Style and format
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: The migrations match the models
+        run: uv run python manage.py makemigrations --check --dry-run
+        env:
+          DEBUG: "1"
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      db:
+        image: pgvector/pgvector:pg18
+        env:
+          POSTGRES_USER: vault
+          POSTGRES_PASSWORD: vault
+          POSTGRES_DB: vault
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vault"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DB_HOST: localhost
+      DB_PASSWORD: vault
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: uv sync
+      - name: Tests, with coverage
+        run: uv run pytest --cov
+      - name: Django's production checks
+        run: uv run python manage.py check --deploy --fail-level WARNING
+        env:
+          SECRET_KEY: ${{ github.sha }}-only-for-the-ci-check-0123456789-abcdefghijklmnopqrstuvwxyz
+          ALLOWED_HOSTS: vault.example.com
+          SMTP_HOST: smtp.example.com
+          TRUST_PROXY_SSL: "1"
+
+  image:
+    runs-on: ubuntu-latest
+    needs: [quality, test]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test configuration (no real secrets)
+        run: |
+          pw=$(openssl rand -hex 16)
+          cat > .env <<EOF
+          DOMAIN=localhost
+          ALLOWED_HOSTS=localhost
+          CSRF_TRUSTED_ORIGINS=https://localhost
+          SECRET_KEY=$(openssl rand -base64 48)
+          POSTGRES_PASSWORD=$pw
+          DB_NAME=vault
+          DB_USER=vault
+          DB_PASSWORD=$pw
+          SMTP_HOST=localhost
+          SMTP_TLS=0
+          EMBEDDING_BACKEND=fake
+          EOF
+      - name: Build and start the whole stack
+        run: docker compose up -d --build --wait
+      - name: Smoke test
+        run: |
+          curl -fsk https://localhost/health/
+          curl -fsk https://localhost/ready/
+          curl -fsk https://localhost/login/ -o /dev/null
+      - name: Logs, if something went wrong
+        if: failure()
+        run: docker compose logs --no-color
+      - run: docker compose down -v

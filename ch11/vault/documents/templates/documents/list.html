@@ -1,0 +1,28 @@
+{% extends "documents/base.html" %}
+{% block title %}Documents{% endblock %}
+{% block content %}
+<h1>Documents</h1>
+{% for m in messages %}<p class="notice {{ m.tags }}">{{ m }}</p>{% endfor %}
+<table>
+  <tr><th>Title</th><th>Owner</th><th>State</th><th>Version</th></tr>
+  {% for d in documents %}
+  <tr>
+    <td><a href="{% url 'detail' d.pk %}">{{ d.title }}</a></td>
+    <td>{{ d.owner.get_full_name|default:d.owner.username }}</td>
+    <td>{{ d.get_state_display }}</td>
+    <td>v{{ d.current_version.number }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="4" class="muted">No documents yet.</td></tr>
+  {% endfor %}
+</table>
+<div class="panel">
+  <h2>New document</h2>
+  <form method="post" action="{% url 'create' %}" enctype="multipart/form-data">{% csrf_token %}
+    <input name="title" placeholder="Title (optional)">
+    <input type="file" name="file" required>
+    <input name="note" placeholder="Note">
+    <button class="primary" type="submit">Upload</button>
+  </form>
+</div>
+{% endblock %}
