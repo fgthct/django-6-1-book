@@ -1,0 +1,100 @@
+{% extends "contacts/base.html" %}
+{% block content %}
+<h1>Address Book {% partial count %}</h1>
+
+<form role="search" method="get" action="{% url 'contacts:list' %}">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search by name, email, or city"
+         autocomplete="off"
+         hx-get="{% url 'contacts:list' %}"
+         hx-trigger="input changed delay:300ms, search"
+         hx-target="#rows"
+         hx-push-url="true"
+         hx-indicator="#waiting">
+  <button type="submit">Search</button>
+  <span id="waiting" class="htmx-indicator">Searching…</span>
+</form>
+
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>City</th><th></th></tr></thead>
+  <tbody id="rows" aria-live="polite">
+    {% partialdef rows inline %}
+      {% for contact in page %}
+        {% partial row %}
+      {% empty %}
+        <tr><td colspan="4">No contacts found.</td></tr>
+      {% endfor %}
+      {% if page.has_next %}
+        <tr id="load-more">
+          <td colspan="4">
+            <button type="button"
+                    hx-get="{% url 'contacts:list' %}?q={{ q|urlencode }}&page={{ page.next_page_number }}"
+                    hx-target="#load-more"
+                    hx-swap="outerHTML">Load more</button>
+          </td>
+        </tr>
+      {% endif %}
+    {% endpartialdef %}
+  </tbody>
+</table>
+
+<section id="detail"></section>
+
+<h2>New contact</h2>
+{% partial new_form %}
+{% endblock %}
+
+{% partialdef row %}
+<tr id="contact-{{ contact.pk }}">
+  <td>{{ contact.name }}</td>
+  <td>{{ contact.email }}</td>
+  <td>{{ contact.city }}</td>
+  <td>
+    <button type="button" hx-get="{% url 'contacts:detail' contact.pk %}"
+            hx-target="#detail">Details</button>
+    <button type="button" hx-get="{% url 'contacts:edit' contact.pk %}"
+            hx-target="closest tr" hx-swap="outerHTML">Edit</button>
+    <button type="button" hx-delete="{% url 'contacts:delete' contact.pk %}"
+            hx-confirm="Delete {{ contact.name }}?"
+            hx-target="closest tr" hx-swap="outerHTML swap:300ms">Delete</button>
+  </td>
+</tr>
+{% endpartialdef %}
+
+{% partialdef row_edit %}
+<tr id="contact-{{ contact.pk }}">
+  <td colspan="4">
+    <form method="post" action="{% url 'contacts:edit' contact.pk %}"
+          hx-post="{% url 'contacts:edit' contact.pk %}"
+          hx-target="closest tr" hx-swap="outerHTML">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Save</button>
+      <button type="button" hx-get="{% url 'contacts:row' contact.pk %}"
+              hx-target="closest tr" hx-swap="outerHTML">Cancel</button>
+    </form>
+  </td>
+</tr>
+{% endpartialdef %}
+
+{% partialdef new_form inline %}
+<form id="new-form" method="post" action="{% url 'contacts:new' %}"
+      hx-post="{% url 'contacts:new' %}" hx-target="this" hx-swap="outerHTML">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add</button>
+</form>
+{% endpartialdef %}
+
+{% partialdef count inline %}<small id="count"
+        hx-get="{% url 'contacts:count' %}"
+        hx-trigger="contactsChanged from:body"
+        hx-swap="outerHTML"
+        {% if oob %}hx-swap-oob="true"{% endif %}>({{ total }} contacts)</small>{% endpartialdef %}
+
+{% partialdef detail %}
+<article>
+  <h3>{{ contact.name }}</h3>
+  <p>{{ contact.email }}{% if contact.phone %} · {{ contact.phone }}{% endif %}</p>
+  <p>{{ contact.city }}</p>
+</article>
+{% endpartialdef %}

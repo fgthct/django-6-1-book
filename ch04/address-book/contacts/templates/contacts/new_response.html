@@ -1,0 +1,7 @@
+{% include "contacts/list.html#new_form" %}
+<template>
+  <tbody hx-swap-oob="afterbegin:#rows">
+    {% include "contacts/list.html#row" %}
+  </tbody>
+</template>
+{% include "contacts/list.html#count" with oob=True %}

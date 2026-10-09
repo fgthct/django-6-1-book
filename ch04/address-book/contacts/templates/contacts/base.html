@@ -1,0 +1,13 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Address Book</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script src="{% static 'htmx.min.js' %}" defer></script>
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
