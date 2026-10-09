@@ -1,0 +1,20 @@
+== A: 30 messages, limit 5 per second
+  campaign completed in 5.0 s
+  deliveries by status: {'sent': 30}
+  messages that reached the server: 30, distinct recipients: 30, anyone more than once: False
+  attempts per delivery: {1: 30}
+  messages arrived in each second: {0: 10, 1: 5, 2: 5, 3: 5, 4: 5}
+== B: SMTP server off for 3 seconds
+  [3.0 s] the SMTP server comes back on
+  campaign completed in 6.5 s
+  deliveries by status: {'sent': 6}
+  messages that reached the server: 6, distinct recipients: 6, anyone more than once: False
+  attempts per delivery: {3: 6}
+  messages arrived in each second: {6: 6}
+== C: workers killed in the middle of a send
+  [1.2 s] both workers killed with kill -9; the server had already received 2 messages
+  deliveries: {'sent': 1, 'pending': 11}
+  requeue_lost(): 11 deliveries put back in the queue
+  campaign completed; deliveries: {'sent': 12}
+  messages that reached the server: 13, distinct recipients: 12
+  recipients who received the message twice: ['user2@example.com']

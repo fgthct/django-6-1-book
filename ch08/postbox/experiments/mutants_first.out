@@ -1,0 +1,31 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+OK   send: doesn't look at the status (double send)
+OK   send: one attempt fewer
+OK   send: wrong mailer
+OK   send: str.format on the text
+OK   send: doesn't count the attempts
+OK   send: linear wait
+OK   send: limit exceeded and doesn't postpone
+SURVIVED send: retries without waiting for the commit
+OK   send: campaign closed too early
+OK   prepare: without ignore_conflicts
+OK   prepare: inactive contacts too
+OK   prepare: ignores the campaign status
+OK   limiter: < instead of <=
+OK   limiter: counters that never expire
+OK   limiter: name ignored in the key
+OK   view: unconditional start
+OK   view: enqueues right away, no commit
+OK   view: the percentage ignores the failed
+OK   template: polling always on
+OK   validation: no NFKC on the email
+OK   validation: no punycode
+OK   validation: name not required
+OK   import: duplicates not detected
+OK   import: subinterpreters without a path
+OK   import: the ones already there are not counted
+OK   recovery: ignores the deadline
+OK   recovery: requeues the closed ones too
+OK   recovery: deadline not updated
+OK   model: no uniqueness of the delivery
+surviving mutants: 1 out of 29

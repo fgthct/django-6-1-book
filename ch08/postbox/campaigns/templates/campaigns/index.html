@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Postbox</title>
+<link rel="icon" href="data:,"></head>
+<body>
+<h1>Postbox</h1>
+<form method="post" action="{% url 'create' %}">{% csrf_token %}
+  <input name="subject" placeholder="Subject" required>
+  <textarea name="body" placeholder="Hello {name}…" required></textarea>
+  <button>Create draft</button>
+</form>
+<ul>
+{% for c in campaigns %}
+  <li><a href="{% url 'detail' c.pk %}">{{ c.subject }}</a> · {{ c.get_status_display }}</li>
+{% endfor %}
+</ul>
+</body></html>

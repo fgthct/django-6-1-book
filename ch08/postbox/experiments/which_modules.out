@@ -1,0 +1,13 @@
+re             ok
+unicodedata    ok
+csv            ok
+json           ok
+django         ok
+psycopg        ok
+redis          ok
+rq             ok
+--- in the Chapter 7 environment (fastembed) ---
+numpy          ImportError: Original error was: module numpy._core._multiarray_umath does not support loading in subinterpreters
+onnxruntime    ImportError: module onnxruntime.capi.onnxruntime_pybind11_state does not support loading in subinterpreters
+fastembed      ImportError: Original error was: module numpy._core._multiarray_umath does not support loading in subinterpreters
+pgvector       ok
