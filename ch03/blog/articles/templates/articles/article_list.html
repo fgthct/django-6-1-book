@@ -1,0 +1,24 @@
+{% extends "articles/base.html" %}
+{% load blog_extra %}
+{% block content %}
+<h1>Articles</h1>
+<form method="get"><input name="q" value="{{ q }}"><button>Search</button></form>
+<ul>
+{% for article in object_list %}
+  <li>
+    <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+    {% if article.category %}<small>{{ article.category.name }}</small>{% endif %}
+    {% if article.excerpt %}<p>{{ article.excerpt|highlight }}</p>{% else %}<p>{{ article.summary }}</p>{% endif %}
+  </li>
+{% empty %}
+  <li>No articles.</li>
+{% endfor %}
+</ul>
+{% if is_paginated %}
+<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">previous</a>{% endif %}
+  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">next</a>{% endif %}
+</p>
+{% endif %}
+{% endblock %}

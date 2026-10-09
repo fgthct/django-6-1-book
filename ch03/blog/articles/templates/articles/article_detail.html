@@ -1,0 +1,11 @@
+{% extends "articles/base.html" %}
+{% block content %}
+<h1>{{ article.title }}</h1>
+<p>{{ article.body }}</p>
+<h2>Comments</h2>
+{% for comment in article.comments.all %}<p><b>{{ comment.author }}</b>: {{ comment.body }}</p>{% endfor %}
+<form method="post" action="{% url 'articles:comment' article.slug %}">
+  {% csrf_token %}
+  <input name="author"><textarea name="body"></textarea><button>Send</button>
+</form>
+{% endblock %}
