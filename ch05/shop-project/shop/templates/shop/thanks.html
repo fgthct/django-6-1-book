@@ -1,0 +1,10 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<h1>Thank you!</h1>
+<p>Order #{{ order.pk }} for {{ order.email }}</p>
+<ul>
+  {% for l in lines %}<li>{{ l.quantity }} × {{ l.product.name }} — ${{ l.unit_price }}</li>{% endfor %}
+</ul>
+<p class="total">Total: ${{ total }}</p>
+<p><a href="{% url 'shop:catalog' %}">Back to the shop</a></p>
+{% endblock %}

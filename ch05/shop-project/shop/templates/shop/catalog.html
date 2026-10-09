@@ -1,0 +1,52 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<form method="get" action="{% url 'shop:catalog' %}"
+      hx-get="{% url 'shop:catalog' %}" hx-trigger="input delay:300ms, submit"
+      hx-target="#grid" hx-push-url="true" hx-indicator="#waiting">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search products" aria-label="Search products">
+  <select name="category" aria-label="Category">
+    <option value="">All categories</option>
+    {% for c in categories %}
+      <option value="{{ c.pk }}"{% if category == c.pk|stringformat:"s" %} selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Search</button>
+  <span id="waiting" class="htmx-indicator">Searching…</span>
+</form>
+
+<div id="grid">
+{% partialdef grid inline %}
+  <p>{{ total }} products</p>
+  <ul class="products">
+    {% for product in products %}
+      <li>
+        <h2>{{ product.name }}</h2>
+        <p class="category">{{ product.category.name }}</p>
+        <p>{{ product.description }}</p>
+        <p class="price">${{ product.price }}</p>
+        {% if product.stock %}
+          <form method="post" action="{% url 'shop:add' product.pk %}"
+                hx-post="{% url 'shop:add' product.pk %}" hx-target="#cart-badge" hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit">Add to cart</button>
+          </form>
+        {% else %}
+          <p><em>Sold out</em></p>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>No products found.</li>
+    {% endfor %}
+  </ul>
+  <nav aria-label="Pages">
+    {% if previous %}<a href="?q={{ q|urlencode }}&category={{ category|urlencode }}&page={{ previous }}"
+       hx-get="{% url 'shop:catalog' %}?q={{ q|urlencode }}&category={{ category|urlencode }}&page={{ previous }}"
+       hx-target="#grid" hx-push-url="true">← Previous</a>{% endif %}
+    Page {{ page.number }}
+    {% if next %}<a href="?q={{ q|urlencode }}&category={{ category|urlencode }}&page={{ next }}"
+       hx-get="{% url 'shop:catalog' %}?q={{ q|urlencode }}&category={{ category|urlencode }}&page={{ next }}"
+       hx-target="#grid" hx-push-url="true">Next →</a>{% endif %}
+  </nav>
+{% endpartialdef %}
+</div>
+{% endblock %}

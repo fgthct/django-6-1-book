@@ -1,0 +1,42 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<h1>Your cart</h1>
+<div id="cart">
+{% partialdef content inline %}
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  {% if lines %}
+    <table>
+      <thead><tr><th>Product</th><th>Price</th><th>Quantity</th><th>Subtotal</th></tr></thead>
+      <tbody>
+      {% for r in lines %}
+        <tr>
+          <td>{{ r.product.name }}</td>
+          <td>${{ r.product.price }}</td>
+          <td>
+          <form method="post" action="{% url 'shop:set_quantity' r.product.pk %}"
+                hx-post="{% url 'shop:set_quantity' r.product.pk %}" hx-target="#cart" hx-swap="innerHTML"
+                hx-trigger="input delay:500ms, submit">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ r.quantity }}" min="0" max="99" aria-label="Quantity of {{ r.product.name }}">
+            <button type="submit">Update</button>
+          </form>
+          </td>
+          <td>${{ r.subtotal }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="total">Total: ${{ total }}</p>
+    <form method="post" action="{% url 'shop:place_order' %}"
+          hx-post="{% url 'shop:place_order' %}" hx-target="#cart" hx-swap="innerHTML">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Confirm order</button>
+    </form>
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+  {% if oob %}{% include "shop/base.html#badge" with oob=True %}{% endif %}
+{% endpartialdef %}
+</div>
+{% endblock %}
